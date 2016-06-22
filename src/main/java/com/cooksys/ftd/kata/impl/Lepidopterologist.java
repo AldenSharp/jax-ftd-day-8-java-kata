@@ -15,15 +15,21 @@ public class Lepidopterologist implements ILepidopterologist {
 	
 	private List<Species> registeredSpecies;
 	private List<Sample> registeredSamples;
+	
+	public Lepidopterologist() {
+		registeredSpecies = new ArrayList<Species>();
+		registeredSamples = new ArrayList<Sample>();
+	}
 
 	@Override
 	public boolean registerSpecies(Species species) {
 		if(this.registeredSpecies.contains(species)) {
 			return false;
+		} else {
+			this.registeredSpecies.add(species);
+			Collections.sort(this.registeredSpecies);
+			return true;
 		}
-		this.registeredSpecies.add(species);
-		Collections.sort(this.registeredSpecies);
-		return true;
 	}
 
 	@Override
