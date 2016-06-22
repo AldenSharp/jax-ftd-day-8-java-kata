@@ -39,6 +39,10 @@ public class Sample implements Comparable<Sample> {
 	public void setCatterfly(Catterfly catterfly) {
 		this.catterfly = catterfly;
 	}
+	
+	public GrowthModel getGrowthModel() {
+		return new GrowthModel(this.catterfly.getWingspan() / this.butterpillar.getLength(), this.catterfly.getWeight() / this.butterpillar.getLeavesEaten());
+	}
 
 	@Override
 	public String toString() {

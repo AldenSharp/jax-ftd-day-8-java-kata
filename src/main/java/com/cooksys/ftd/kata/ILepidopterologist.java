@@ -32,7 +32,7 @@ public interface ILepidopterologist {
 	 * sample.
 	 * 
 	 * @param sample
-	 * @return Optional.of the species found for the sample, Optional.empty
+	 * @return Optional.of(the species found for the sample), Optional.empty
 	 *         otherwise
 	 */
 	Optional<Species> findSpeciesForSample(Sample sample);
