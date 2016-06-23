@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.cooksys.ftd.kata.model.*;
 import com.cooksys.ftd.kata.impl.Lepidopterologist;
@@ -25,7 +26,7 @@ public class LepidopterologistTest {
 	public void testIsSpeciesRegistered() {
 		Lepidopterologist l = new Lepidopterologist();
 		Species monarch = new Species("monarch", new GrowthModel(1, 1), 1);
-		Species notMonarch = new Species("not monarch", new GrowthModel(2, 2), 1);
+		Species notMonarch = new Species("not monarch", new GrowthModel(2, 2), 0.5);
 		l.registerSpecies(monarch);
 		Assert.assertEquals(true, l.isSpeciesRegistered(monarch));
 		Assert.assertEquals(false, l.isSpeciesRegistered(notMonarch));
@@ -35,7 +36,7 @@ public class LepidopterologistTest {
 	public void testFindSpeciesForSample() {
 		Lepidopterologist l = new Lepidopterologist();
 		Species monarch = new Species("monarch", new GrowthModel(1, 1), 1);
-		Species killer = new Species("killer", new GrowthModel(20, 20), 1);
+		Species killer = new Species("killer", new GrowthModel(20, 20), 0.05);
 		l.registerSpecies(monarch);
 		l.registerSpecies(killer);
 		Butterpillar b = new Butterpillar(1, 1);
@@ -45,11 +46,9 @@ public class LepidopterologistTest {
 		Sample yellowMonarch = new Sample(b, c1);
 		Sample yellowKiller = new Sample(b, c2);
 		Sample yellowNothing = new Sample(b, c3);
-		Assert.assertEquals(true, l.findSpeciesForSample(yellowMonarch));
-		Assert.assertEquals(monarch, l.findSpeciesForSample(yellowMonarch));
-		Assert.assertEquals(true, l.findSpeciesForSample(yellowKiller));
-		Assert.assertEquals(killer, l.findSpeciesForSample(yellowKiller));
-		Assert.assertEquals(false, l.findSpeciesForSample(yellowNothing));
+		Assert.assertEquals(Optional.of(monarch), l.findSpeciesForSample(yellowMonarch));
+		Assert.assertEquals(Optional.of(killer), l.findSpeciesForSample(yellowKiller));
+		Assert.assertEquals(Optional.empty(), l.findSpeciesForSample(yellowNothing));
 	}
 
 	@Test
@@ -63,7 +62,6 @@ public class LepidopterologistTest {
 		Sample yellowMonarch = new Sample(b, c1);
 		Sample yellowKiller = new Sample(b, c2);
 		Assert.assertEquals(true, l.recordSample(yellowMonarch));
-		Assert.assertEquals(false, l.recordSample(yellowMonarch));
 		Assert.assertEquals(false, l.recordSample(yellowKiller));
 	}
 
@@ -71,7 +69,7 @@ public class LepidopterologistTest {
 	public void testGetSamplesForSpecies() {
 		Lepidopterologist l = new Lepidopterologist();
 		Species monarch = new Species("monarch", new GrowthModel (1, 1), 1);
-		Species killer = new Species("killer", new GrowthModel (200, 200), 1);
+		Species killer = new Species("killer", new GrowthModel (200, 200), 0.005);
 		l.registerSpecies(monarch);
 		l.registerSpecies(killer);
 		Assert.assertEquals(true, l.getSamplesForSpecies(monarch).isEmpty());
@@ -100,19 +98,21 @@ public class LepidopterologistTest {
 	@Test
 	public void testGetRegisteredSpecies() {
 		Lepidopterologist l = new Lepidopterologist();
-		Species monarch = new Species("monarch", new GrowthModel(1, 1), 1);
-		l.registerSpecies(monarch);
-		Species tiny = new Species("tiny", new GrowthModel(0.05, 0.05), 0.05);
-		l.registerSpecies(tiny);
-		Assert.assertEquals(tiny, l.getRegisteredSpecies().get(0));
-		Assert.assertEquals(monarch, l.getRegisteredSpecies().get(1));
+		Species b = new Species("b", new GrowthModel(1, 1), 1);
+		l.registerSpecies(b);
+		Species a = new Species("a", new GrowthModel(0.05, 0.05), 1);
+		l.registerSpecies(a);
+		List<Species> test = new ArrayList<Species>();
+		test.add(a);
+		test.add(b);
+		Assert.assertEquals(test, l.getRegisteredSpecies());
 	}
 
 	@Test
 	public void testGetTaxonomy() {
 		Lepidopterologist l = new Lepidopterologist();
 		Species monarch = new Species("monarch", new GrowthModel(1, 1), 1);
-		Species killer = new Species("killer", new GrowthModel(20, 20), 1);
+		Species killer = new Species("killer", new GrowthModel(200, 200), 0.05);
 		l.registerSpecies(monarch);
 		l.registerSpecies(killer);
 		Butterpillar b = new Butterpillar(1, 1);
